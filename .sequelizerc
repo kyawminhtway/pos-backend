@@ -1,0 +1,11 @@
+require('babel-register');
+
+const dir = 'src'
+const path = require('path');
+
+module.exports = {
+  'config': path.resolve(dir, 'config/babelHook.cjs'),
+  'models-path': path.resolve(dir, 'models'),
+  'seeders-path': path.resolve(dir, 'seeders'),
+  'migrations-path': path.resolve(dir, 'migrations')
+};
