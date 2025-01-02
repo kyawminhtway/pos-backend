@@ -1,6 +1,10 @@
 import Models from '../models/db.js';
 import { ValidationError } from '../errors/customErrors.js';
 
+const IMPORTANT_USER_FIELDS = [
+    'username',
+    'password'
+];
 const User = Models.User;
 
 export const getUserByID = async (req, res, next) => {
@@ -40,8 +44,22 @@ export const createUsers = async (req, res, next, transaction) => {
     });
 };
 
+export const checkToForceLogout = async (req, res, user_ids, body, transaction) => {
+    const fieldsToChange = new Set(Object.keys(body));
+    const destroyCookie = IMPORTANT_USER_FIELDS.filter(field => fieldsToChange.has(field)); 
+    if(user_ids.includes(req.user.id) && destroyCookie.length > 0){
+        await req.access_token.update({ active: false }, { transaction, individualHooks: true });
+        res.cookie('refreshToken', '', {
+            httpOnly: true,
+            maxAge: 3 * 30 * 24 * 60 * 60 * 1000,
+            path: '/api/auth/refresh-token'
+        });
+    }
+};
+
 export const updateUser = async (req, res, next, transaction) => {
     await req.record.update(req.body, { transaction, individualHooks: true });
+    await checkToForceLogout(req, res, [req.record.id], req.body, transaction);
     return res.status(200).json({
         status: 'success',
         message: 'Successfully updated the user(s).'
@@ -58,6 +76,7 @@ export const updateUsers = async (req, res, next, transaction) => {
         individualHooks: true,
         changedFields: body,
     });
+    await checkToForceLogout(req, res, body.record_ids, req.body, transaction);
     return res.status(200).json({
         status: 'success',
         message: 'Successfully updated the user(s).'

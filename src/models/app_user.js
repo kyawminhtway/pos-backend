@@ -62,6 +62,7 @@ export const UserRole = (sequelize, DataTypes) => {
   {
     freezeTableName: true,
     modelName: 'app_user_role',
+    timestamps: false
   });
 };
 

@@ -31,6 +31,7 @@ const validateToken = async (req, res, next) => {
     if(current_time >= date_of_expiration)
         throw new AuthError('Access token has already expired.');
     req.user = access_token.app_user;
+    req.access_token = access_token;
     const roles = await UserRole.findAll({
         attributes: ['code'],
         include: [{ association: 'users', attributes: [] }],

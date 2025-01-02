@@ -36,6 +36,9 @@ app.use(cors(corsOptions));
 // JSON
 app.use(express.json());
 
+// Form Data
+app.use(express.urlencoded({ extended: false }))
+
 // Cookie Parser
 app.use(cookieParser());
 

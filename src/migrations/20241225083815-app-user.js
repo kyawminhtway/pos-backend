@@ -18,7 +18,7 @@ const up = async (queryInterface, Sequelize) => {
     username: {
       allowNull: false,
       type: Sequelize.STRING,
-      unique: false,
+      unique: true,
     },
     password: {
       allowNull: false,
@@ -56,11 +56,21 @@ const up = async (queryInterface, Sequelize) => {
   await queryInterface.createTable('app_user_role_relation', {
     user_id: {
       allowNull: false,
-      type: Sequelize.INTEGER
+      type: Sequelize.INTEGER,
+      references: {
+        model: 'app_user',
+        key: 'id',
+      },
+      onDelete: 'CASCADE'
     },
     role_id: {
       allowNull: false,
-      type: Sequelize.INTEGER
+      type: Sequelize.INTEGER,
+      references: {
+        model: 'app_user_role',
+        key: 'id',
+      },
+      onDelete: 'CASCADE'
     },
   });
 
@@ -83,6 +93,11 @@ const up = async (queryInterface, Sequelize) => {
     user_id: {
       allowNull: false,
       type: Sequelize.INTEGER,
+      references: {
+        model: 'app_user',
+        key: 'id',
+      },
+      onDelete: 'CASCADE'
     },
     active: {
       type: Sequelize.BOOLEAN,
