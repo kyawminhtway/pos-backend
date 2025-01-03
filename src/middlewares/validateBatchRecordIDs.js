@@ -1,4 +1,4 @@
-import { ValidationError } from "../errors/customErrors.js";
+import { ValidationError } from "../utils/customErrors.js";
 
 const validateBatchRecordIDs = (req, res, next) => {
     const body = req.body;

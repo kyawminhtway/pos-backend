@@ -1,8 +1,8 @@
 import { Router } from 'express';
-import Models from '../models/db.js';
-import validateRecordID from '../middlewares/validateRecordID.js';
-import validateBatchRecordIDs from '../middlewares/validateBatchRecordIDs.js';
-import transactionHandler from '../utils/transactionHandler.js';
+import Models from '../../db.js';
+import validateRecordID from '../../../middlewares/validateRecordID.js';
+import validateBatchRecordIDs from '../../../middlewares/validateBatchRecordIDs.js';
+import transactionHandler from '../../../utils/transactionHandler.js';
 import { 
     getUserByID, 
     getUsers, 

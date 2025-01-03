@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { authtenticate, refreshToken } from "../controllers/auth.js";
-import transactionHandler from '../utils/transactionHandler.js';
+import transactionHandler from '../../../utils/transactionHandler.js';
 
 const router = Router();
 

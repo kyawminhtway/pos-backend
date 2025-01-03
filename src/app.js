@@ -10,8 +10,9 @@ import globalErrorHandler from './middlewares/globalErrorHandler.js';
 import validateToken from './middlewares/validateToken.js';
 
 // Routes
-import authRoutes from './routes/auth.js';
-import userRoutes from './routes/app_user.js';
+import authRoutes from './apps/app_user/routes/auth.js';
+import userRoutes from './apps/app_user/routes/app_user.js';
+import productCategoryRoutes from './apps/stock/routes/product_category.js';
 
 const app = express();
 
@@ -47,6 +48,9 @@ app.use('/api/auth', authRoutes);
 
 // Auth Routes
 app.use('/api/user', validateToken, userRoutes);
+
+// Stock Module
+app.use('/api/product-category', validateToken, productCategoryRoutes);
 
 // Global Error Handler
 app.use('*', globalErrorHandler);

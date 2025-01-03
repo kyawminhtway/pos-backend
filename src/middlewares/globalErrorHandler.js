@@ -1,5 +1,5 @@
 import { UniqueConstraintError, DatabaseError } from 'sequelize';
-import { AuthError, AccessError, ValidationError } from "../errors/customErrors.js";
+import { AuthError, AccessError, ValidationError } from "../utils/customErrors.js";
 
 const globalErrorHandler = (err, req, res, next) => {
     if(err instanceof ValidationError){
@@ -15,6 +15,11 @@ const globalErrorHandler = (err, req, res, next) => {
     if(err instanceof AuthError){
         var error = err.serializeError();
         console.log('error', error.message);
+        res.cookie('refreshToken', '', {
+            httpOnly: true,
+            maxAge: 3 * 30 * 24 * 60 * 60 * 1000,
+            path: '/api/auth/refresh-token'
+        });
         return res.status(403).json(error);
     }
     if(err instanceof UniqueConstraintError){

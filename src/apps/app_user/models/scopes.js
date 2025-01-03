@@ -12,6 +12,3 @@ const AppUserScopes = (Models) => {
 };
 
 export default AppUserScopes;
-  
-  
-  

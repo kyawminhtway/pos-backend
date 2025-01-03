@@ -5,7 +5,7 @@ const path = require('path');
 
 module.exports = {
   'config': path.resolve(dir, 'config/babelHook.cjs'),
-  'models-path': path.resolve(dir, 'models'),
+  'models-path': path.resolve(dir, 'apps'),
   'seeders-path': path.resolve(dir, 'seeders'),
   'migrations-path': path.resolve(dir, 'migrations')
 };

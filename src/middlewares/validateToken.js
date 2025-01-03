@@ -1,6 +1,6 @@
 import moment from 'moment';
-import Models from '../models/db.js';
-import { AuthError, ValidationError } from '../errors/customErrors.js';
+import Models from '../apps/db.js';
+import { AuthError, ValidationError } from '../utils/customErrors.js';
 
 const User = Models.User;
 const UserRole = Models.UserRole;
