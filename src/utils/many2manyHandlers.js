@@ -1,5 +1,5 @@
 import { Op } from "sequelize";
-import { ValidationError } from "../errors/customErrors.js";
+import { ValidationError } from "./customErrors.js";
 
 export const setM2MField = async (instance, associationAlias, actions, transaction) => {
     const association = instance.constructor.associations[associationAlias];
@@ -24,7 +24,7 @@ export const setM2MField = async (instance, associationAlias, actions, transacti
                 [Op.and]: [{ [foreignKey]: instance.id }, { [otherKey]: action.record_ids }] 
             });
         }else{
-            throw new ValidationError(`Setting Many2many field failed!\nassociationAlias: ${associationAlias}\ndata: ${data}`);
+            throw new ValidationError(`Setting Many2many field failed!\nassociationAlias: ${associationAlias}\ndata: ${action}`);
         }
     }
     if(toCreate.length > 0){

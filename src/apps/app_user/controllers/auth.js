@@ -1,8 +1,8 @@
 import { v4 as uuidv4 } from 'uuid';
 import moment from 'moment';
 import bcrypt from 'bcrypt';
-import Models from '../models/db.js';
-import { AuthError, ValidationError } from '../errors/customErrors.js';
+import Models from '../../db.js';
+import { AuthError, ValidationError } from '../../../utils/customErrors.js';
 
 const User = Models.User;
 const AccessToken = Models.AccessToken;

@@ -1,5 +1,5 @@
-import Models from '../models/db.js';
-import { ValidationError } from '../errors/customErrors.js';
+import Models from '../../db.js';
+import { ValidationError } from '../../../utils/customErrors.js';
 
 const IMPORTANT_USER_FIELDS = [
     'username',
@@ -7,7 +7,7 @@ const IMPORTANT_USER_FIELDS = [
 ];
 const User = Models.User;
 
-export const getUserByID = async (req, res, next) => {
+export const getUserByID = (req, res, next) => {
     var user = req.record.toJSON();
     delete user.password;
     return res.status(200).json({
@@ -28,16 +28,16 @@ export const getUsers = async (req, res, next) => {
     });
 };
 
-export const createUser = async (req, res, next, transaction) => {
-    const createdUser = await User.create(req.body, { transaction });
+export const createUser = async (req, res, next) => {
+    const createdUser = await User.create(req.body, { transaction: req.transaction });
     return res.status(201).json({
         status: 'success',
         result: createdUser.id,
     })
 };
 
-export const createUsers = async (req, res, next, transaction) => {
-    const createdUsers = await User.bulkCreate(req.body, { transaction, individualHooks: true });
+export const createUsers = async (req, res, next) => {
+    const createdUsers = await User.bulkCreate(req.body, { transaction: req.transaction, individualHooks: true });
     return res.status(201).json({
         status: 'success',
         result: createdUsers.map(u => u.id),
@@ -57,35 +57,35 @@ export const checkToForceLogout = async (req, res, user_ids, body, transaction) 
     }
 };
 
-export const updateUser = async (req, res, next, transaction) => {
-    await req.record.update(req.body, { transaction, individualHooks: true });
-    await checkToForceLogout(req, res, [req.record.id], req.body, transaction);
+export const updateUser = async (req, res, next) => {
+    await req.record.update(req.body, { transaction: req.transaction, individualHooks: true });
+    await checkToForceLogout(req, res, [req.record.id], req.body, req.transaction);
     return res.status(200).json({
         status: 'success',
-        message: 'Successfully updated the user(s).'
+        message: 'Successfully updated the user.'
     });
 };
 
-export const updateUsers = async (req, res, next, transaction) => {
+export const updateUsers = async (req, res, next) => {
     const body = req.body;
     if(!(body.record_ids && Array.isArray(body.record_ids) && body.record_ids.length > 0))
         throw new ValidationError('Record IDs are missing in the body.');
-    await User.update(body, { 
-        where: { id: body.record_ids }, 
-        transaction,
+    await User.scope({ method: ['apply_rights', req.roles] }).update(body, { 
+        where: [{ id: body.record_ids }], 
+        transaction: req.transaction,
         individualHooks: true,
         changedFields: body,
     });
-    await checkToForceLogout(req, res, body.record_ids, req.body, transaction);
+    await checkToForceLogout(req, res, body.record_ids, req.body, req.transaction);
     return res.status(200).json({
         status: 'success',
-        message: 'Successfully updated the user(s).'
+        message: 'Successfully updated the users.'
     });
 };
 
-export const deleteUser = async (req, res, next, transaction) => {
+export const deleteUser = async (req, res, next) => {
     const user_id = req.record.id;
-    await req.record.destroy({ transaction });
+    await req.record.destroy({ transaction: req.transaction });
     console.log(`User with ID - ${user_id} has been deleted.`);
     return res.status(200).json({
         status: 'success',
@@ -93,14 +93,14 @@ export const deleteUser = async (req, res, next, transaction) => {
     });
 };
 
-export const deleteUsers = async (req, res, next, transaction) => {
-    await User.destroy({ 
+export const deleteUsers = async (req, res, next) => {
+    await User.scope({ method: ['apply_rights', req.roles] }).destroy({ 
         where: [{ id: req.body.record_ids }], 
-        transaction 
+        transaction: req.transaction 
     });
     console.log(`Users with ID - ${req.body.record_ids} have been deleted.`);
     return res.status(200).json({
         status: 'success',
-        message: 'Successfully deleted the user.'
+        message: 'Successfully deleted the users.'
     });
 };

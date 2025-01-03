@@ -1,14 +1,16 @@
 import { Transaction } from 'sequelize';
-import Models from '../models/db.js';
+import Models from '../apps/db.js';
 
 const sequelize = Models.sequelize;
 
-const transactionHandler = (f, isolationLevel) => {
+const transactionHandler = (f, options={}) => {
     const callback = async (req, res, next) => {
         const response = await sequelize.transaction({
-            isolationLevel: isolationLevel ? isolationLevel : Transaction.ISOLATION_LEVELS.REPEATABLE_READ
+            isolationLevel: options.isolationLevel ? options.isolationLevel : Transaction.ISOLATION_LEVELS.REPEATABLE_READ,
+            ...options
         }, async transaction => {
-            const result = await f(req, res, next, transaction);
+            req.transaction = transaction;
+            const result = await f(req, res, next);
             return result;
         });
         return response;

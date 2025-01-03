@@ -1,5 +1,5 @@
 import bcrypt from 'bcrypt';
-import { ValidationError } from '../../errors/customErrors.js';
+import { ValidationError } from '../../../utils/customErrors.js';
 
 const SALT_ROUNDS = 10;
 
